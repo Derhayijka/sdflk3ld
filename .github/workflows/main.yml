@@ -1,0 +1,25 @@
+name: Windows_RDP_Pankaj
+on: workflow_dispatch
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: User Setup
+        run: |
+          net user AdminPankaj Pankaj@123 /add
+          net localgroup administrators AdminPankaj /add
+          
+      - name: Install Tailscale
+        run: |
+          Invoke-WebRequest https://pkgs.tailscale.com/stable/tailscale-setup-latest.exe -OutFile tailscale.exe
+          Start-Process -FilePath .\tailscale.exe -ArgumentList "/quiet" -Wait
+          
+      - name: Connect Tailscale
+        run: |
+          & "C:\Program Files\Tailscale\tailscale.exe" up --authkey 'tskey-auth-kA35ESSAw611CNTRL-nEQfCmuj5uRGVjSX2PMZtRiMt7hpJgV53'
+          
+      - name: Keep Alive (6 Hours)
+        run: |
+          Write-Host "RDP Active! 1920x1080 streaming start karein."
+          Start-Sleep -Seconds 21600
